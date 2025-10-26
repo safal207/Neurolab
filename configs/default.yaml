@@ -1,0 +1,105 @@
+# LIMINAL Heartbeat - Default Configuration
+
+# Model Configuration
+model:
+  name: "TinyRecursiveModelTRMv6"  # Model version to use
+  dim: 128  # Embedding dimension
+  affect_w: 0.3  # Weight for affect modulation
+  inner_iterations: 4  # Inner iterations per outer iteration (for non-v6 models)
+  K: 5  # Number of outer recursive iterations
+
+# Data Configuration
+data:
+  dataset: "emobank"  # Dataset to use
+  data_path: null  # Path to dataset (null = auto-download)
+  batch_size: 32
+  test_size: 0.2  # Fraction for test set
+  num_workers: 4  # DataLoader workers
+  random_state: 42
+
+# Embedding Configuration
+embeddings:
+  type: "sentence-transformer"  # 'sentence-transformer' or 'transformer'
+  model_name: "all-MiniLM-L6-v2"  # Model for embeddings
+  pooling: "mean"  # Pooling strategy for transformer embeddings
+  projection_dim: 128  # Project embeddings to this dimension
+  device: "cuda"  # Device for embedding generation
+
+# Training Configuration - Phase 1 (Full Training)
+training:
+  phase1:
+    epochs: 50
+    learning_rate: 0.003
+    lr_end: 0.0001  # Final learning rate for cosine annealing
+    weight_decay: 0.00001
+    gradient_clip: 1.0
+    scheduler: "cosine"  # 'cosine', 'step', or null
+    save_every: 10  # Save checkpoint every N epochs
+
+  # Phase 2 (Fine-tuning) - Optional
+  phase2:
+    enabled: false
+    epochs: 15
+    learning_rate: 0.0001
+    weight_decay: 0.000001
+    gradient_clip: 1.0
+    scheduler: null
+
+# Optimizer Configuration
+optimizer:
+  name: "adamw"  # 'adam', 'adamw', 'sgd'
+  betas: [0.9, 0.999]
+  eps: 1.0e-8
+
+# Logging and Checkpointing
+logging:
+  log_dir: "./logs"
+  checkpoint_dir: "./checkpoints"
+  save_best: true  # Save best model based on validation loss
+  log_interval: 10  # Log every N batches
+
+# Visualization
+visualization:
+  enabled: true
+  plot_every: 5  # Plot every N epochs
+  save_plots: true
+  plot_dir: "./plots"
+
+# Evaluation
+evaluation:
+  metrics:
+    - "mae"  # Mean Absolute Error
+    - "mse"  # Mean Squared Error
+    - "r2"   # R² Score
+    - "hope"  # Custom emotional metric
+    - "faith"  # Custom emotional metric
+    - "love"  # Custom emotional metric
+
+# Experiment Tracking (optional)
+tracking:
+  enabled: false
+  backend: "wandb"  # 'wandb', 'tensorboard', or null
+  project_name: "liminal-heartbeat"
+  run_name: null  # null = auto-generate
+
+# Device Configuration
+device:
+  type: "auto"  # 'auto', 'cuda', 'cpu', or specific device like 'cuda:0'
+  mixed_precision: false  # Use automatic mixed precision (AMP)
+
+# Reproducibility
+seed: 42
+deterministic: true  # Set to true for reproducible results (may reduce performance)
+
+# Model Variants (uncomment to use)
+# model_variants:
+#   v1:
+#     name: "TinyRecursiveModelCompetitive"
+#   v2:
+#     name: "TinyRecursiveModelTRMv2"
+#   v3:
+#     name: "TinyRecursiveModelTRMv3"
+#   v4:
+#     name: "TinyRecursiveModelTRMv4"
+#   v6:
+#     name: "TinyRecursiveModelTRMv6"
