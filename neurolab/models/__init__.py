@@ -2,7 +2,9 @@
 LIMINAL Heartbeat Model Architectures
 
 This module contains all model architectures for emotion recognition in text.
-Models are organized in evolutionary order from v1 to v6.
+Models are organized in evolutionary order from v1 to v7.
+
+Latest: v7 includes quantum-inspired emotional operators!
 """
 
 from .self_attention_tiny import SelfAttentionTiny
@@ -14,6 +16,10 @@ from .tiny_recursive_model_trmv2 import TinyRecursiveModelTRMv2
 from .tiny_recursive_model_trmv3 import TinyRecursiveModelTRMv3
 from .tiny_recursive_model_trmv4 import TinyRecursiveModelTRMv4
 from .tiny_recursive_model_trmv6 import TinyRecursiveModelTRMv6
+from .tiny_recursive_model_trmv7 import TinyRecursiveModelTRMv7
+
+# Quantum module
+from . import quantum
 
 __all__ = [
     # Base components
@@ -26,5 +32,8 @@ __all__ = [
     "TinyRecursiveModelTRMv2",  # v2
     "TinyRecursiveModelTRMv3",  # v3
     "TinyRecursiveModelTRMv4",  # v4
-    "TinyRecursiveModelTRMv6",  # v6 (latest)
+    "TinyRecursiveModelTRMv6",  # v6
+    "TinyRecursiveModelTRMv7",  # v7 (latest - quantum-enhanced!)
+    # Quantum module
+    "quantum",
 ]
