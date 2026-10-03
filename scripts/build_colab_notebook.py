@@ -8,6 +8,11 @@ import nbformat
 
 
 def build(code_ref):
+    destination = Path(__file__).resolve().parents[1] / "notebooks/neurolab_emobank_lab.ipynb"
+    existing_ids = {}
+    if destination.exists():
+        existing = nbformat.read(destination, as_version=4)
+        existing_ids = {(cell.cell_type, cell.source): cell.id for cell in existing.cells}
     notebook = nbformat.v4.new_notebook()
     cells = []
     def markdown(text):
@@ -51,7 +56,7 @@ def build(code_ref):
         subprocess.run(["git", "-C", str(repo), "checkout", "--quiet", CODE_REF], check=True)
     os.chdir(repo)
     sys.path.insert(0, str(repo))
-    packages = ["torch", "numpy", "pandas", "sklearn", "matplotlib", "joblib", "tqdm"]
+    packages = ["torch", "numpy", "pandas", "sklearn", "matplotlib", "joblib", "tqdm", "ipywidgets"]
     if any(importlib.util.find_spec(name) is None for name in packages):
         subprocess.run([sys.executable, "-m", "pip", "install", "-q",
                         "-r", "requirements-lab.txt"], check=True)
@@ -138,9 +143,22 @@ def build(code_ref):
                          f"95% интервал по строкам [{lower:+.4f}, {upper:+.4f}]."))
     ''')
     markdown('''
-    ## 7. Ваш английский текст и повторная загрузка весов
-    Замените TEXTS своими предложениями. Функция загружает обученные веса
-    и ту же обработку текста с диска. Прогнозы остаются оценками текстовых аннотаций.
+    ## 7. Один текст — три метода
+    Выберите пример или введите английское предложение в поле ниже и нажмите
+    **Сравнить модели**. Панель загружает сохранённые веса K=1/K=5 и Ridge;
+    повторно обучать модели для каждого текста не нужно.
+
+    Покрытие словаря описывает знакомые признаки, а не уверенность модели.
+    Примеры позволяют увидеть ошибки и близкие к среднему прогнозы.
+    Английский — язык этого эксперимента; язык введённого текста автоматически не определяется.
+    ''')
+    code('''
+    from neurolab.lab_demo import create_demo
+    display(create_demo(output_dir))
+    ''')
+    markdown('''
+    ### Проверка повторной загрузки
+    Эта проверка сравнивает численные результаты после повторной загрузки с диска.
     ''')
     code('''
     TEXTS = ["I am happy about this result.", "I am worried about tomorrow."]
@@ -160,6 +178,7 @@ def build(code_ref):
     code('''
     import shutil
     archive = Path(shutil.make_archive(str(output_dir), "zip", root_dir=output_dir))
+    print("Готовый архив:", archive)
     try:
         from google.colab import files
     except ImportError:
@@ -173,12 +192,13 @@ def build(code_ref):
     фиксированными признаками. Механизм памяти проверяйте отдельно на упорядоченных
     последовательностях. Текущий практикум проверяет независимые английские тексты.
     ''')
+    for cell in cells:
+        cell.id = existing_ids.get((cell.cell_type, cell.source), cell.id)
     notebook.cells = cells
     notebook.metadata = {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                          "language_info": {"name": "python", "version": "3.12"},
                          "colab": {"name": "neurolab_emobank_lab.ipynb", "provenance": []}}
     nbformat.validate(notebook)
-    destination = Path(__file__).resolve().parents[1] / "notebooks/neurolab_emobank_lab.ipynb"
     destination.parent.mkdir(parents=True, exist_ok=True)
     nbformat.write(notebook, destination)
     print(destination)

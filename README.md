@@ -6,7 +6,7 @@ A reproducible research lab for recursive prediction of text emotion ratings.
 
 The maintained lab trains a model, selects its checkpoint on development data, evaluates held-out text, and saves everything needed to repeat inference. The original research notebook and model family remain available.
 
-[Open the Colab lab](https://colab.research.google.com/github/safal207/Neurolab/blob/codex/neurolab-colab-lab/notebooks/neurolab_emobank_lab.ipynb) · [Russian walkthrough](docs/COLAB_LAB_RU.md) · [Recorded experiment](evidence/EMOBANK_QUICK_RUN.md)
+[Open the Colab lab](https://colab.research.google.com/github/safal207/Neurolab/blob/codex/neurolab-colab-lab/notebooks/neurolab_emobank_lab.ipynb) · [Russian walkthrough](docs/COLAB_LAB_RU.md) · [Recorded experiment](evidence/EMOBANK_QUICK_RUN.md) · [Three-minute demo](docs/DEMO_RU.md)
 
 ## What you can run
 
@@ -14,7 +14,8 @@ The maintained lab trains a model, selects its checkpoint on development data, e
 | --- | --- |
 | Colab: Runtime → Run all | Trained weights, baseline comparison, three figures, reload check and downloadable bundle |
 | Local experiment | The same CPU workflow with explicit parameters |
-| Trained demo | V/A/D estimates from saved weights and saved text preprocessing |
+| Notebook demo panel | English text input, examples, saved Ridge/K=1/K=5 predictions and vocabulary coverage |
+| Trained CLI demo | V/A/D estimates from saved weights and saved text preprocessing |
 | Original Osozn3.ipynb | Historical exploratory notebook, outside the maintained lab validation |
 
 No GPU, paid API, or downloaded language-model weights are required. The lightweight lab uses train-fitted TF-IDF → SVD → scaling to test the recursive model, rather than claiming to reproduce a transformer-backed experiment.
@@ -48,6 +49,8 @@ Default experiment: seed 42, 3,000 training rows, 64 features, 10 epochs, K=1 an
 The first bounded quick run used 3,000 train / 985 dev / 984 test rows after overlap exclusions. Test mean MAE was **0.1944 for Ridge**, **0.1988 for K=1**, and **0.1951 for K=5**. Five-pass inference improved the point estimate over one-pass inference, while superiority over Ridge was not established. See the recorded report for precise scope, environments, intervals and provenance.
 
 These are English text annotation estimates from one lexical-feature configuration. They do not establish a person's emotional state, calibrated confidence, clinical utility, consciousness or a general architecture advantage. The repository's Hope/Faith/Love names are experimental metaphors, not independently validated psychological measurements.
+
+A clean Google Colab session also completed all eight original code cells on 3 October 2026. Its mean test MAE was 0.1944 for Ridge, 0.1991 for K=1 and 0.1945 for K=5 (rounded UI values); K=5 superiority remained unestablished. Separate evidence is retained in [Colab validation](evidence/COLAB_VALIDATION.md). Numerical equality across different library versions and hardware is not guaranteed by a fixed seed.
 
 ## Saved bundle
 

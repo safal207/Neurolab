@@ -259,13 +259,16 @@ def run_experiment(data_path, output_dir, config=LabConfig()):
     return report
 
 
-def load_predictor(output_dir):
+def load_predictor(output_dir, k=None):
     """Read a bundle created by this lab. Joblib artifacts must be locally trusted."""
     output = Path(output_dir)
     report = json.loads((output / "report.json").read_text())
-    k = report["selected_K"]
+    k = report["selected_K"] if k is None else k
+    if type(k) is not int or k not in report["config"]["iterations"]:
+        raise ValueError("Requested recursion depth is not in this trained bundle")
     checkpoint = torch.load(output / f"model_k{k}.pt", map_location="cpu", weights_only=True)
-    if checkpoint.get("trained") is not True or checkpoint.get("use_memory") is not False:
+    if (checkpoint.get("trained") is not True or checkpoint.get("use_memory") is not False
+            or checkpoint.get("K") != k):
         raise ValueError("Not a trained independent-text lab checkpoint")
     model = TinyRecursiveModelTRMv6(dim=checkpoint["dim"], use_memory=False)
     model.load_state_dict(checkpoint["state_dict"])
