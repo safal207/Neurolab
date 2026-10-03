@@ -52,6 +52,8 @@ These are English text annotation estimates from one lexical-feature configurati
 
 A clean Google Colab session also completed all eight original code cells on 3 October 2026. Its mean test MAE was 0.1944 for Ridge, 0.1991 for K=1 and 0.1945 for K=5 (rounded UI values); K=5 superiority remained unestablished. Separate evidence is retained in [Colab validation](evidence/COLAB_VALIDATION.md). Numerical equality across different library versions and hardware is not guaranteed by a fixed seed.
 
+The updated nine-cell notebook also passed a new Google Colab run. The comparison panel was checked with an example button, custom text, empty input, and text outside its fitted vocabulary. The local regression suite contains 13 passing tests; [the demo guide](docs/DEMO_RU.md) includes a three-minute walkthrough and a reproducible 60-second explainer generator.
+
 ## Saved bundle
 
 - features.joblib: fitted vocabulary, SVD and scaling;
