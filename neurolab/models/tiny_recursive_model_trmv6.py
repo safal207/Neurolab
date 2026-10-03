@@ -33,8 +33,11 @@ class TinyRecursiveModelTRMv6(nn.Module):
             - PAD emotion values of shape [batch, 3]
     """
 
-    def __init__(self, dim=128, affect_w=0.3):
+    def __init__(self, dim=128, affect_w=0.3, use_memory=False):
         super().__init__()
+        self.affect_w = affect_w
+        # EmoBank rows are independent texts, not a chronological conversation.
+        self.use_memory = use_memory
         self.ln_latent, self.ln_answer, self.ln_z = [
             nn.LayerNorm(dim * k) for k in (3, 2, 1)
         ]
@@ -71,6 +74,10 @@ class TinyRecursiveModelTRMv6(nn.Module):
                 - List of K confidence values
                 - PAD emotion prediction of shape [batch, 3]
         """
+        if K < 1:
+            raise ValueError("K must be positive")
+        if self.use_memory and x.shape[0] != 1:
+            raise ValueError("Persistent memory requires an ordered stream with batch size 1")
         y = y0.clone()
         z = torch.zeros_like(y)
         confs, hist = [], []
@@ -86,7 +93,7 @@ class TinyRecursiveModelTRMv6(nn.Module):
             if a is not None:
                 al = self.affect_proj(a)
                 g = self.affect_gate(torch.cat([z, al], -1))
-                z = z + 0.3 * g * al
+                z = z + self.affect_w * g * al
                 confs.append(g.mean().item())
             else:
                 confs.append(0.0)
@@ -100,10 +107,15 @@ class TinyRecursiveModelTRMv6(nn.Module):
 
             # Soul Kernel integration (memory-based processing)
             r = torch.tanh(z + y)
-            z, r = self.soul(x, y, z, r, confs)
+            if self.use_memory:
+                z, r = self.soul(x, y, z, r, confs)
 
             # Update answer state
             answer_input = self.ln_answer(torch.cat([y, z], -1))
             y = y + 0.4 * self.answer(answer_input)
 
         return y, confs, self.pad_head(z)
+
+    def reset_memory(self):
+        """Start a new independent stream when persistent memory is enabled."""
+        self.soul.mem.clear()

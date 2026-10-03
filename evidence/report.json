@@ -1,0 +1,149 @@
+{
+  "config": {
+    "seed": 42,
+    "max_train": 3000,
+    "epochs": 10,
+    "batch_size": 128,
+    "dim": 64,
+    "vocabulary": 8000,
+    "learning_rate": 0.001,
+    "iterations": [
+      1,
+      5
+    ]
+  },
+  "data": {
+    "source_rows": 10062,
+    "official_counts": {
+      "train": 8062,
+      "test": 1000,
+      "dev": 1000
+    },
+    "used_counts": {
+      "train": 3000,
+      "dev": 985,
+      "test": 984
+    },
+    "exact_text_overlap_excluded": {
+      "dev": 15,
+      "test": 16
+    },
+    "text_overlap_policy": "strip/casefold; dev excludes train; test excludes train and original dev",
+    "split_id_hashes": {
+      "train": "5a703ccdf9eb2307cd278a8e47a2a41d9bc78ce7168ff88f7cde0bdb312ce59b",
+      "dev": "ad12b710c9891154c051257475ea7d029dde64bc2286ad7e8f34f65a31a9f54a",
+      "test": "12c8f1e76457eea85bf14939fb7f0d34cae5d6308a438eeda883b3156b7dc144"
+    }
+  },
+  "data_provenance": {
+    "repository": "JULIELab/EmoBank",
+    "commit": "248ce2a43e165a66d31aeaed83cff9641d6654e0",
+    "expected_blob": "e810731bef6967c14daefb84bd904c76628442d7",
+    "actual_blob": "e810731bef6967c14daefb84bd904c76628442d7",
+    "matches_pinned_source": true,
+    "sha256": "1ade4a4a453e880c0f39d0536d2b355e8a716e0cf88236c64cdb4d438cf9605b",
+    "license": "CC-BY-SA-4.0"
+  },
+  "code_commit": "d6f32982a4ffbca6b4955f2680f15136b859bd56",
+  "source_sha256": {
+    "neurolab/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "neurolab/data/__init__.py": "036e2aaa4338ac16e30351afb7aa1f4c89033998a3c156926e4e7f9094f5b61f",
+    "neurolab/data/embeddings.py": "3c6ba932dc5d2cb20e15005571e974a7bfae6da83d1722c972e43041cf746bb9",
+    "neurolab/data/emobank_loader.py": "bcf1798082f6820583ac8bd98a372583ad2672821d05606418f8b5a0912ff256",
+    "neurolab/experiment.py": "22da0c5e439f73fe21649965981a0cd876fce00ff804b8652bbaea74babcc7f7",
+    "neurolab/lab_plots.py": "b6a3499cfffda7b5bc5d68cb5958876f0852f7c6bdf6f38b3c2199f376479572",
+    "neurolab/models/__init__.py": "b91e753716f5465b557fb40f55c370e698bbb22dbd3724c089bb1ddc470720a7",
+    "neurolab/models/pad_regression_head.py": "24b69fb8ee88daf947271d1f3dc4197b8fcbc21aafdf7034a7a72579e652965e",
+    "neurolab/models/rinse_head.py": "462b144128d436862e157063c9c95c327c9ecb3f4d2bccc52f29c56f2bfeb50d",
+    "neurolab/models/self_attention_tiny.py": "0d7ba0df0d145799b098ac25d2d1aaa37f203189f2d86862f3690f54fa56057f",
+    "neurolab/models/soul_kernel.py": "bd25e68432bdd14dbf188954934eb6b996d4a36eaa02d56528cdcbf29c7024c7",
+    "neurolab/models/tiny_recursive_model_competitive.py": "afda2a2aaadb9be79e16a9cdb550a3984e0372f6f7d1962ffd3548906f9eb811",
+    "neurolab/models/tiny_recursive_model_trmv2.py": "912d0fcbea911b7844278fcf07fc311227d98672e8db9293f6e6af954347e723",
+    "neurolab/models/tiny_recursive_model_trmv3.py": "ef735690f84b63caf8a8c297e990eecbd8517ec2b11baf919c87ea9d8e0b1fa2",
+    "neurolab/models/tiny_recursive_model_trmv4.py": "20a8ff1e7a753c56b90ae53631f26c32b478138c9c82cdbd723ee47f73b730bf",
+    "neurolab/models/tiny_recursive_model_trmv6.py": "441d7c862d34b57fd63d3dde3007c2381b6739563d6891fcd35bc58bf39c2e14",
+    "neurolab/training/__init__.py": "93d94eedf7b646dad7cb55499e3fade13e53e0e7fa5b6495a189ea0bd2cd4441",
+    "neurolab/training/trainer.py": "942d26e4fd1a20a18b760bbda4e9b66b48741aa3cb0787b18f926e3149b187a6",
+    "neurolab/utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "neurolab/visualization/__init__.py": "8bbb65194cf9d9ffebb3af3df793793f1f05b4dca6ba13cac78c6358959b6e67",
+    "neurolab/visualization/plots.py": "25bfbfbbbaaea91f8b52c3e673f80ae7edf2a82e80f9e504e5055a8c94d2f348"
+  },
+  "environment": {
+    "torch": "2.14.1+cpu",
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.8.0",
+    "matplotlib": "3.10.8",
+    "joblib": "1.5.3"
+  },
+  "selection_on_dev_only": {
+    "Ridge": {
+      "alpha": 100.0,
+      "dev_MAE": 0.19110707938671112
+    },
+    "Neurolab K=1": {
+      "epoch": 2,
+      "dev_MAE": 0.19691187143325806
+    },
+    "Neurolab K=5": {
+      "epoch": 3,
+      "dev_MAE": 0.19241292774677277
+    }
+  },
+  "selected_neural": "Neurolab K=5",
+  "selected_K": 5,
+  "test_metrics": [
+    {
+      "model": "Train mean",
+      "MAE_V": 0.2427276372909546,
+      "MAE_A": 0.18835172057151794,
+      "MAE_D": 0.15689684450626373,
+      "MAE_mean": 0.19599206745624542
+    },
+    {
+      "model": "Ridge",
+      "MAE_V": 0.2421986609697342,
+      "MAE_A": 0.18528611958026886,
+      "MAE_D": 0.15568721294403076,
+      "MAE_mean": 0.19439063966274261
+    },
+    {
+      "model": "Neurolab K=1",
+      "MAE_V": 0.2470121830701828,
+      "MAE_A": 0.19118817150592804,
+      "MAE_D": 0.15822432935237885,
+      "MAE_mean": 0.1988082379102707
+    },
+    {
+      "model": "Neurolab K=5",
+      "MAE_V": 0.24171829223632812,
+      "MAE_A": 0.18652527034282684,
+      "MAE_D": 0.15703728795051575,
+      "MAE_mean": 0.19509360194206238
+    }
+  ],
+  "paired_comparisons_to_ridge": {
+    "Neurolab K=1": {
+      "delta_MAE": 0.00441756471991539,
+      "row_bootstrap_95pct": [
+        0.0021626001223921778,
+        0.006647873239126056
+      ],
+      "resamples": 1000,
+      "negative_means": "candidate has lower error",
+      "scope": "test rows at this trained seed, not uncertainty across training runs"
+    },
+    "Neurolab K=5": {
+      "delta_MAE": 0.0007029547705315053,
+      "row_bootstrap_95pct": [
+        -0.0008436061296379193,
+        0.002300702658249065
+      ],
+      "resamples": 1000,
+      "negative_means": "candidate has lower error",
+      "scope": "test rows at this trained seed, not uncertainty across training runs"
+    }
+  },
+  "elapsed_seconds": 7.65,
+  "interpretation": "One English-text lexical-feature experiment; no consciousness, clinical, multilingual or SOTA claim."
+}

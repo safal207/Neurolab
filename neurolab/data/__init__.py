@@ -8,13 +8,16 @@ from .emobank_loader import (
     load_emobank,
     create_dataloaders,
 )
-from .embeddings import (
-    EmbeddingGenerator,
-    SentenceTransformerEmbedder,
-    TransformerEmbedder,
-    ProjectionLayer,
-    create_embedder,
-)
+
+def __getattr__(name):
+    """Load optional transformer dependencies only when that backend is used."""
+    if name in {
+        "EmbeddingGenerator", "SentenceTransformerEmbedder", "TransformerEmbedder",
+        "ProjectionLayer", "create_embedder",
+    }:
+        from . import embeddings
+        return getattr(embeddings, name)
+    raise AttributeError(name)
 
 __all__ = [
     # EmoBank dataset
