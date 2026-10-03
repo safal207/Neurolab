@@ -163,3 +163,9 @@ data/processed/
 outputs/
 results/
 emotional_log.csv
+
+# Reproducible lab artifacts are generated locally, not source files.
+artifacts/
+data/emobank.csv
+!evidence/*.json
+!evidence/*.csv

@@ -145,7 +145,10 @@ class LIMINALTrainer:
 
             # Forward pass
             y_init = torch.zeros_like(embeddings)
-            _, confidences, pad_pred = self.model(embeddings, y_init, vad_labels)
+            if hasattr(self.model, "reset_memory"):
+                self.model.reset_memory()
+            # Targets are loss inputs only. They are unavailable at inference.
+            _, confidences, pad_pred = self.model(embeddings, y_init)
 
             # Compute loss
             loss = self.criterion(pad_pred, vad_labels)
@@ -217,7 +220,9 @@ class LIMINALTrainer:
 
             # Forward pass
             y_init = torch.zeros_like(embeddings)
-            _, confidences, pad_pred = self.model(embeddings, y_init, vad_labels)
+            if hasattr(self.model, "reset_memory"):
+                self.model.reset_memory()
+            _, confidences, pad_pred = self.model(embeddings, y_init)
 
             # Compute loss
             loss = self.criterion(pad_pred, vad_labels)

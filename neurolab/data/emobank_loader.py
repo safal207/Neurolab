@@ -20,7 +20,8 @@ class EmoBankDataset(torch.utils.data.Dataset):
 
     Args:
         data_path (str): Path to the EmoBank CSV file
-        split (str): 'train', 'test', or 'all'
+        split (str): Official 'train', 'dev', 'test', or 'all'.
+        normalize (bool): Convert raw [1, 5] labels to model [-1, 1] targets.
         test_size (float): Fraction of data to use for testing (if splitting)
         random_state (int): Random seed for reproducibility
     """
@@ -31,15 +32,24 @@ class EmoBankDataset(torch.utils.data.Dataset):
         split: str = "all",
         test_size: float = 0.2,
         random_state: int = 42,
+        normalize: bool = True,
     ):
         self.data_path = data_path
         self.split = split
 
         # Load data
-        self.df = pd.read_csv(data_path)
+        self.df = pd.read_csv(data_path, keep_default_na=False)
+        if "text" not in self.df or self.df["text"].isna().any():
+            raise ValueError("Dataset needs a non-null text column")
+        if split not in {"all", "train", "dev", "test"}:
+            raise ValueError("split must be all, train, dev, or test")
 
         # Split if needed
-        if split in ["train", "test"]:
+        if split != "all" and "split" in self.df:
+            self.df = self.df.loc[self.df["split"] == split].copy()
+        elif split == "dev":
+            raise ValueError("A dev split must be declared in the dataset")
+        elif split in ["train", "test"]:
             train_df, test_df = train_test_split(
                 self.df, test_size=test_size, random_state=random_state
             )
@@ -48,6 +58,14 @@ class EmoBankDataset(torch.utils.data.Dataset):
         # Extract text and VAD labels
         self.texts = self.df["text"].values if "text" in self.df.columns else []
         self.vad_labels = self._extract_vad_labels()
+        if self.vad_labels is None or not torch.isfinite(self.vad_labels).all():
+            raise ValueError("Dataset needs finite V/A/D labels")
+        if normalize:
+            if (self.vad_labels < 1).any() or (self.vad_labels > 5).any():
+                raise ValueError("Raw EmoBank labels must lie in [1, 5]")
+            self.vad_labels = (self.vad_labels - 3.0) / 2.0
+        if not len(self.df):
+            raise ValueError(f"Dataset split {split!r} is empty")
 
     def _extract_vad_labels(self) -> Optional[torch.Tensor]:
         """Extract VAD (Valence, Arousal, Dominance) labels from dataframe."""
@@ -167,7 +185,7 @@ def create_dataloaders(
     num_workers: int = 0,
 ) -> Tuple[torch.utils.data.DataLoader, torch.utils.data.DataLoader]:
     """
-    Create train and test DataLoaders for EmoBank.
+    Create training and development DataLoaders; leave test for final evaluation.
 
     Args:
         data_path (str, optional): Path to EmoBank CSV
@@ -177,14 +195,14 @@ def create_dataloaders(
         num_workers (int): Number of workers for data loading
 
     Returns:
-        Tuple[DataLoader, DataLoader]: Train and test DataLoaders
+        Tuple[DataLoader, DataLoader]: Train and development DataLoaders
     """
     train_dataset = load_emobank(
         data_path=data_path, split="train", test_size=test_size, random_state=random_state
     )
 
     test_dataset = load_emobank(
-        data_path=data_path, split="test", test_size=test_size, random_state=random_state
+        data_path=data_path, split="dev", test_size=test_size, random_state=random_state
     )
 
     train_loader = torch.utils.data.DataLoader(
